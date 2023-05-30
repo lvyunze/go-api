@@ -5,7 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 	"time"
@@ -17,11 +16,11 @@ func main() {
 		Prefork:               false,
 		DisableStartupMessage: true,
 	})
-	//file, err := os.OpenFile("app.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer file.Close()
+	file, err := os.OpenFile("app.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
 	// 日志记录中间件
 	app.Use(cors.New())
 	app.Use(logger.New(logger.Config{
@@ -31,11 +30,6 @@ func main() {
 		TimeInterval: 500 * time.Millisecond,
 		Output:       file,
 	}))
-	file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer file.Close()
 	// 注册一个中间件
 	app.Use(func(c *fiber.Ctx) error {
 		// 输出请求信息
